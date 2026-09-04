@@ -12,6 +12,8 @@ dependencies = [
     "redis>=7.4.0",
     "rq>=2.8.0",
     "uvicorn>=0.35.0",
+    "newclid[yuclid]",
+    "py-yuclid",
 ]
 
 [project.optional-dependencies]
@@ -26,3 +28,7 @@ newclid-backend = "newclid_backend:main"
 [build-system]
 requires = ["uv_build>=0.11.13,<0.12.0"]
 build-backend = "uv_build"
+
+[tool.uv.sources]
+newclid = { git = "https://github.com/SimeonVutov/Newclid", subdirectory = "newclid", rev = "c0b15e791dab78e89bf8dbe0dc9a31fbb9297393" }
+py-yuclid = { git = "https://github.com/SimeonVutov/Newclid", subdirectory = "yuclid", rev = "c0b15e791dab78e89bf8dbe0dc9a31fbb9297393" }
