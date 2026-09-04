@@ -26,11 +26,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml uv.lock ./
-COPY newclid ./newclid
-COPY yuclid ./yuclid
-COPY ncdgen ./ncdgen
-COPY backend ./backend
+RUN uv sync --frozen --no-dev --no-install-project
 
+COPY README.md ./
+COPY src ./src
 RUN uv sync --frozen --no-dev
 
 
@@ -52,6 +51,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /app /app
 
 ENV PATH="/app/.venv/bin:$PATH"
-ENV PYTHONPATH="/app/backend/src:/app/newclid/src:/app/ncdgen/src"
 
 EXPOSE 8000
