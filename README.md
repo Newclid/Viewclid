@@ -69,7 +69,7 @@ The backend never runs the solver inside an HTTP request. Solving happens in a s
 <p align="center">
   <img src="assets/screenshots/home-page.png" width="900" alt="Viewclid home page">
   <br>
-  <em>Home page: start a new problem from a blank workspace.</em>
+  <sub><em>Home page: start a new problem from a blank workspace.</em></sub>
 </p>
 
 <table>
@@ -77,14 +77,12 @@ The backend never runs the solver inside an HTTP request. Solving happens in a s
     <td width="22%" valign="top">
       <img src="assets/screenshots/toolbar.png" width="100%" alt="Construction toolbar">
       <br>
-      <em>Construction toolbar</em>
-      <br>
-      <sub>This view shows only a subset of the available tools.</sub>
+      <sub><em>Construction toolbar</em></sub>
     </td>
     <td width="78%" valign="top">
       <img src="assets/screenshots/drawing.png" width="100%" alt="Drawing a geometry problem">
       <br>
-      <em>Drawing workspace: a problem under construction on the interactive canvas.</em>
+      <sub><em>Drawing workspace: a problem under construction on the interactive canvas.</em></sub>
     </td>
   </tr>
 </table>
@@ -92,13 +90,13 @@ The backend never runs the solver inside an HTTP request. Solving happens in a s
 <p align="center">
   <img src="assets/screenshots/solution-page.png" width="900" alt="Solution page">
   <br>
-  <em>Solution page: the completed proof, with the full step-by-step breakdown and canvas highlighting.</em>
+  <sub><em>Solution page: the completed proof, with the full step-by-step breakdown and canvas highlighting.</em></sub>
 </p>
 
 <p align="center">
   <img src="assets/screenshots/solution-walkthrough.gif" width="900" alt="Solving a problem, step by step">
   <br>
-  <em>Solving a problem: the solver runs and the proof is revealed step by step on the canvas.</em>
+  <sub><em>Solving a problem: the solver runs and the proof is revealed step by step on the canvas.</em></sub>
 </p>
 
 ## Getting started
