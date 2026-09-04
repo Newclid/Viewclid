@@ -29,6 +29,12 @@ newclid-backend = "newclid_backend:main"
 requires = ["uv_build>=0.11.13,<0.12.0"]
 build-backend = "uv_build"
 
+[tool.pytest.ini_options]
+markers = [
+    "slow: exercises the real Newclid/Yuclid solver, slower than other tests",
+    "redis: requires a real Redis server",
+]
+
 [tool.uv.sources]
 newclid = { git = "https://github.com/SimeonVutov/Newclid", subdirectory = "newclid", rev = "c0b15e791dab78e89bf8dbe0dc9a31fbb9297393" }
 py-yuclid = { git = "https://github.com/SimeonVutov/Newclid", subdirectory = "yuclid", rev = "c0b15e791dab78e89bf8dbe0dc9a31fbb9297393" }
