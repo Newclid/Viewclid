@@ -1,12 +1,10 @@
 # Viewclid
 
-**A web application for [Newclid](https://github.com/Newclid/Newclid): construct plane geometry problems visually, solve them with the Newclid/Yuclid engine, and step through the generated proof.**
+Visually construct plane geometry problems, solve them with Newclid, and step through the generated proof.
 
-![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)
-![TypeScript](https://img.shields.io/badge/typescript-5.6-3178C6?logo=typescript&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-async%20API-009688?logo=fastapi&logoColor=white)
-![Redis](https://img.shields.io/badge/redis-job%20queue-DC382D?logo=redis&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-compose-2496ED?logo=docker&logoColor=white)
+[![Backend Tests](https://github.com/Newclid/Viewclid/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/Newclid/Viewclid/actions/workflows/backend-tests.yml)
+[![Frontend Tests](https://github.com/Newclid/Viewclid/actions/workflows/frontend-tests.yml/badge.svg)](https://github.com/Newclid/Viewclid/actions/workflows/frontend-tests.yml)
+[![Container Integration](https://github.com/Newclid/Viewclid/actions/workflows/docker-stack.yml/badge.svg)](https://github.com/Newclid/Viewclid/actions/workflows/docker-stack.yml)
 
 ---
 
