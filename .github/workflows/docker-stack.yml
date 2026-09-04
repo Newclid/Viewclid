@@ -1,4 +1,4 @@
-name: Docker Stack
+name: Container Integration
 on:
   pull_request:
     branches: [main]
