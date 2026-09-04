@@ -1,0 +1,45 @@
+name: Set up backend toolchain
+description: >
+  Installs Python, uv, and the C++ toolchain (Boost, CMake, g++) needed to
+  build py-yuclid from source, with uv's build cache enabled.
+
+runs:
+  using: composite
+  steps:
+    - name: Install Boost/CMake/g++ toolchain
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          git \
+          build-essential \
+          gcc-14 \
+          g++-14 \
+          cmake \
+          ninja-build \
+          pkg-config \
+          libboost-dev \
+          libboost-log-dev \
+          libboost-json-dev \
+          libboost-program-options-dev \
+          libboost-system-dev \
+          libboost-test-dev
+
+    - name: Configure C++ build environment
+      shell: bash
+      run: |
+        echo "CC=/usr/bin/gcc-14" >> "$GITHUB_ENV"
+        echo "CXX=/usr/bin/g++-14" >> "$GITHUB_ENV"
+        echo "CMAKE_GENERATOR=Ninja" >> "$GITHUB_ENV"
+        echo "CMAKE_ARGS=-DUSE_STATIC_LINK=OFF -DBUILD_DOC=OFF -DCMAKE_BUILD_TYPE=Release" >> "$GITHUB_ENV"
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        enable-cache: true
+        cache-dependency-glob: "backend/uv.lock"
