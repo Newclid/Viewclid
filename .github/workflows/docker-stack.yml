@@ -1,0 +1,79 @@
+name: Docker Stack
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "docker-compose.yml"
+      - "docker-compose.dev.yml"
+      - ".github/workflows/docker-stack.yml"
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "docker-compose.yml"
+      - "docker-compose.dev.yml"
+      - ".github/workflows/docker-stack.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-test:
+    name: Build, start, and verify the stack
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build and start the stack
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
+
+      - name: Wait for the API to be reachable through nginx
+        run: |
+          for _ in $(seq 1 60); do
+            curl -sf http://127.0.0.1:8080/api/health && exit 0
+            sleep 2
+          done
+          echo "backend never became reachable through nginx"
+          exit 1
+
+      - name: Submit a job and verify the worker picks it up
+        # Proves web -> api -> redis -> worker wiring inside Compose. Does not
+        # wait for the solve to finish - that the engine produces a correct
+        # proof is already covered by Backend Tests.
+        run: |
+          set -e
+          job=$(curl -sf -X POST http://127.0.0.1:8080/api/jobs \
+            -H "Content-Type: application/json" \
+            -d '{"input_type":"jgex","problem_input":"a b c = triangle a b c; d = on_tline d b a c, on_tline d c a b ? perp a d b c"}')
+          echo "created: $job"
+          job_id=$(echo "$job" | python3 -c "import sys,json; print(json.load(sys.stdin)['job_id'])")
+
+          for _ in $(seq 1 20); do
+            job_status=$(curl -sf "http://127.0.0.1:8080/api/jobs/$job_id" | python3 -c "import sys,json; print(json.load(sys.stdin)['status'])")
+            echo "status: $job_status"
+            if [ "$job_status" = "running" ] || [ "$job_status" = "succeeded" ]; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "worker never picked up the job (stuck queued)"
+          exit 1
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml logs
+
+      - name: Tear down
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml down
