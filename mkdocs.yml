@@ -1,0 +1,118 @@
+site_name: Viewclid Docs
+site_description: Developer documentation for Viewclid
+site_url: https://newclid.github.io/Viewclid/
+repo_url: https://github.com/Newclid/Viewclid
+repo_name: Newclid/Viewclid
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+
+extra_css:
+  - stylesheets/extra.css
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - def_list
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - User Guide:
+      - user-guide/index.md
+      - Constructing a problem: user-guide/constructing-a-problem.md
+      - Defining a goal: user-guide/defining-a-goal.md
+      - Custom theorems: user-guide/custom-theorems.md
+      - Reviewing a proof: user-guide/reviewing-a-proof.md
+  - Backend:
+      - backend/index.md
+      - Architecture: backend/architecture.md
+      - Setup: backend/setup.md
+      - Modules:
+          - backend/modules/index.md
+          - API and routing: backend/modules/api.md
+          - Queue and tasks: backend/modules/queue-and-tasks.md
+          - Runner: backend/modules/runner.md
+          - Result model: backend/modules/result-model.md
+          - Custom theorems: backend/modules/custom-theorems.md
+          - Configuration: backend/modules/configuration.md
+      - Guides:
+          - backend/guides/index.md
+          - Extend the job request: backend/guides/extend-the-job-request.md
+          - Extend custom theorems: backend/guides/extend-custom-theorems.md
+          - Expose new proof data: backend/guides/expose-new-proof-data.md
+          - Debug job failures: backend/guides/debug-job-failures.md
+      - API reference: backend/api-reference.md
+      - Testing: backend/testing.md
+  - Frontend:
+      - frontend/index.md
+      - Architecture: frontend/architecture.md
+      - Setup: frontend/setup.md
+      - Modules:
+          - frontend/modules/index.md
+          - Scene and geometry: frontend/modules/scene-and-geometry.md
+          - Tools and input: frontend/modules/tools-and-input.md
+          - Constructions: frontend/modules/constructions.md
+          - Rendering: frontend/modules/rendering.md
+          - State stores: frontend/modules/state-stores.md
+          - JGEX emission: frontend/modules/jgex-emission.md
+          - Backend integration: frontend/modules/backend-integration.md
+          - Proof UI: frontend/modules/proof-ui.md
+          - Custom theorems: frontend/modules/custom-theorems.md
+      - Guides:
+          - frontend/guides/index.md
+          - Add a construction: frontend/guides/add-a-construction.md
+          - Add a goal predicate: frontend/guides/add-a-goal.md
+          - Add a theorem predicate: frontend/guides/add-a-custom-theorem.md
+          - Display new proof data: frontend/guides/display-new-proof-data.md
+          - Debug frontend-backend flow: frontend/guides/debug-frontend-backend-flow.md
+      - Testing: frontend/testing.md
+  - Contracts:
+      - contracts/index.md
+      - JGEX problem input: contracts/jgex-problem-input.md
+      - Solver job lifecycle: contracts/solver-job-lifecycle.md
+      - Proof result model: contracts/proof-result-model.md
+      - Custom theorem contract: contracts/custom-theorem-contract.md

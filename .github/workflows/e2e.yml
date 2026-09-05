@@ -1,25 +1,31 @@
-name: E2E
+name: End-to-End Tests
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - ".github/actions/setup-backend-toolchain/**"
+      - ".github/workflows/e2e.yml"
   push:
     branches: [main]
     paths:
-      - "frontend/**"
       - "backend/**"
-      - ".github/workflows/e2e.yml"
-  pull_request:
-    paths:
       - "frontend/**"
-      - "backend/**"
+      - ".github/actions/setup-backend-toolchain/**"
       - ".github/workflows/e2e.yml"
   workflow_dispatch:
+
 permissions:
   contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
 jobs:
   frontend-backend:
-    name: Frontend-backend
+    name: Frontend and backend
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -33,44 +39,70 @@ jobs:
           --health-timeout 3s
           --health-retries 20
     env:
-      REDIS_URL: redis://127.0.0.1:6379/15
+      REDIS_URL: redis://127.0.0.1:6379/0
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - uses: astral-sh/setup-uv@v6
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up backend toolchain
+        uses: ./.github/actions/setup-backend-toolchain
+
+      - name: Install backend
+        working-directory: backend
+        run: uv sync --extra test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - name: Install backend
-        # No engine needed: the test only checks that jobs get enqueued.
-        run: |
-          uv venv
-          uv pip install -e "backend[test]"
+
       - name: Install frontend
         working-directory: frontend
         run: npm ci
+
+      - name: Get installed Playwright version
+        id: playwright-version
+        working-directory: frontend
+        run: echo "version=$(node -p "require('./node_modules/@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
       - name: Install Playwright Chromium
         working-directory: frontend
         run: npx playwright install --with-deps chromium
+
       - name: Start backend and frontend
+        # This test only checks that a job gets enqueued (see
+        # tests/e2e/frontend-backend/submit-job.e2e.spec.ts), so no worker
+        # process is started here.
         run: |
-          .venv/bin/python -m uvicorn newclid_backend.main:app \
-            --app-dir backend/src --host 127.0.0.1 --port 8000 &
-          (cd frontend && npm run dev -- --host 127.0.0.1 --port 5173 &)
-      - name: Run Playwright tests
+          cd backend && uv run uvicorn newclid_backend.main:app --host 127.0.0.1 --port 8000 &
+          cd frontend && npm run dev -- --host 127.0.0.1 --port 5173 &
+
+      - name: Wait for services and run Playwright tests
         working-directory: frontend
-        # uvicorn and vite were started in the background, so they may not be
-        # listening yet. Wait for both to respond before starting Playwright,
-        # otherwise the test hits a closed port and fails.
         run: |
           for url in http://127.0.0.1:8000/api/health http://127.0.0.1:5173; do
             for _ in $(seq 1 30); do curl -sf "$url" >/dev/null && break; sleep 1; done
           done
           npm run test:e2e:frontend-backend
+
+      - name: Stop backend and frontend
+        # setup-uv's post-job cache prune hangs on a lock held by uvicorn if
+        # it's still running (it's still using uv's shared cache dir), so it
+        # must be stopped before the job ends rather than left for GitHub's
+        # orphan-process cleanup, which runs too late to unblock that prune.
+        if: always()
+        run: |
+          pkill -f "uvicorn newclid_backend.main:app" || true
+          pkill -f "vite --host 127.0.0.1 --port 5173" || true
+
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4

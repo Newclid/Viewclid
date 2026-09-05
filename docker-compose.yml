@@ -1,8 +1,8 @@
 x-backend-image: &backend-image
   image: newclid-backend:demo
   build:
-    context: .
-    dockerfile: Dockerfile.backend
+    context: ./backend
+    dockerfile: Dockerfile
 
 services:
   web:
