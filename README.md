@@ -12,6 +12,8 @@ Visually construct plane geometry problems, solve them with Newclid, and step th
 
 [Newclid](https://github.com/Newclid/Newclid) is a fast, open-source solver for plane geometry problems, but using it means writing JGEX by hand and running a CLI or Python script. **Viewclid** removes that barrier: it's a self-hostable web application that lets anyone construct a geometry problem visually, define a goal, optionally add custom theorems, and watch the solver produce a step-by-step, highlighted proof, right in the browser.
 
+New to the app itself? **[Read the User Guide](https://newclid.github.io/Viewclid/user-guide/)** for a full walkthrough — constructing a problem, defining a goal, adding custom theorems, and reading the resulting proof.
+
 Viewclid is made of two independently deployable pieces that ship together in this repository:
 
 | Component | What it does |
@@ -60,7 +62,7 @@ Viewclid is made of two independently deployable pieces that ship together in th
                                              proof
 ```
 
-The backend never runs the solver inside an HTTP request. Solving happens in a separate worker process, so the API stays responsive regardless of how long a proof search takes. See [`docs/manual/development/`](docs/manual/development/) for the full architecture writeups and the frontend↔backend↔engine contracts.
+The backend never runs the solver inside an HTTP request. Solving happens in a separate worker process, so the API stays responsive regardless of how long a proof search takes. See [`docs/`](docs/) for the full architecture writeups and the frontend↔backend↔engine contracts.
 
 ## Screenshots
 
@@ -171,7 +173,8 @@ Runs at `http://localhost:5173` and expects a backend reachable at `/api` (run t
 Viewclid/
 ├── backend/                     FastAPI + Redis/RQ asynchronous solver service
 ├── frontend/                    TypeScript/Vite web client
-├── docs/manual/development/     Architecture guides and frontend/backend/engine contracts
+├── docs/                        MkDocs source for architecture guides and contracts
+├── mkdocs.yml                   MkDocs site configuration
 ├── docker-compose.yml           Full-stack service definitions
 ├── docker-compose.dev.yml       Local development overrides
 └── docker-compose.deploy.yml    Production/TLS overrides
@@ -179,11 +182,18 @@ Viewclid/
 
 ## Documentation
 
-In-depth architecture notes, guides, and the frontend↔backend↔engine data contracts live under [`docs/manual/development/`](docs/manual/development/):
+The full documentation site is published at **[newclid.github.io/Viewclid](https://newclid.github.io/Viewclid/)** — check it for anything not covered in this README. Source is a [MkDocs](https://www.mkdocs.org/) site under [`docs/`](docs/):
 
-- [`backend/`](docs/manual/development/backend/): backend architecture, API reference, setup, and testing.
-- [`frontend/`](docs/manual/development/frontend/): frontend architecture, setup, and testing.
-- [`contracts/`](docs/manual/development/contracts/): the JGEX problem input, custom theorem, solver job lifecycle, and proof result contracts shared between frontend and backend.
+- [User Guide](https://newclid.github.io/Viewclid/user-guide/): how to use the app itself — constructing a problem, defining a goal, custom theorems, and reading a proof. Start here if you just want to use Viewclid, not develop it.
+- [`docs/backend/`](docs/backend/): backend architecture, API reference, setup, and testing.
+- [`docs/frontend/`](docs/frontend/): frontend architecture, setup, and testing.
+- [`docs/contracts/`](docs/contracts/): the JGEX problem input, custom theorem, solver job lifecycle, and proof result contracts shared between frontend and backend.
+
+To browse it locally instead:
+
+```bash
+uvx --with mkdocs-material mkdocs serve
+```
 
 ## Testing
 
