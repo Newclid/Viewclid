@@ -82,6 +82,16 @@ jobs:
           done
           npm run test:e2e:frontend-backend
 
+      - name: Stop backend and frontend
+        # setup-uv's post-job cache prune hangs on a lock held by uvicorn if
+        # it's still running (it's still using uv's shared cache dir), so it
+        # must be stopped before the job ends rather than left for GitHub's
+        # orphan-process cleanup, which runs too late to unblock that prune.
+        if: always()
+        run: |
+          pkill -f "uvicorn newclid_backend.main:app" || true
+          pkill -f "vite --host 127.0.0.1 --port 5173" || true
+
       - name: Upload Playwright report on failure
         if: failure()
         uses: actions/upload-artifact@v4
