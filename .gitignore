@@ -1,0 +1,6 @@
+site/
+__pycache__/
+*.pyc
+*.pyo
+dump.rdb
+.DS_Store

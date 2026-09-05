@@ -1,0 +1,6 @@
+/* Material's built-in .mermaid rule only sets margin, not centering —
+   diagrams render flush left by default. Center them instead. */
+.mermaid {
+  display: flex;
+  justify-content: center;
+}
