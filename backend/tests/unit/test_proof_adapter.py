@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-from newclid_backend import runner_helpers
+from newclid_backend import proof_adapter
 
 
 def _proof_step(predicate_id: str, applied_on: list[str]) -> SimpleNamespace:
@@ -19,7 +19,7 @@ def test_maps_known_premise_ids_to_step_indices() -> None:
         _proof_step("step-a", []),
         _proof_step("step-b", ["step-a"]),
     )
-    assert runner_helpers._build_step_premise_indices(proof_data) == [[], [0]]
+    assert proof_adapter._build_step_premise_indices(proof_data) == [[], [0]]
 
 
 def test_ignores_unknown_premise_ids() -> None:
@@ -27,7 +27,7 @@ def test_ignores_unknown_premise_ids() -> None:
         _proof_step("step-a", []),
         _proof_step("step-b", ["construction-assumption", "unknown"]),
     )
-    assert runner_helpers._build_step_premise_indices(proof_data) == [[], []]
+    assert proof_adapter._build_step_premise_indices(proof_data) == [[], []]
 
 
 def test_deduplicates_repeated_premise_ids() -> None:
@@ -35,7 +35,7 @@ def test_deduplicates_repeated_premise_ids() -> None:
         _proof_step("step-a", []),
         _proof_step("step-b", ["step-a", "step-a", "step-a"]),
     )
-    assert runner_helpers._build_step_premise_indices(proof_data) == [[], [0]]
+    assert proof_adapter._build_step_premise_indices(proof_data) == [[], [0]]
 
 
 def test_sorts_premise_indices_ascending() -> None:
@@ -45,7 +45,7 @@ def test_sorts_premise_indices_ascending() -> None:
         _proof_step("step-c", []),
         _proof_step("step-d", ["step-c", "step-a", "step-b"]),
     )
-    assert runner_helpers._build_step_premise_indices(proof_data) == [
+    assert proof_adapter._build_step_premise_indices(proof_data) == [
         [],
         [],
         [],
@@ -59,4 +59,4 @@ def test_handles_mixed_known_and_unknown_references() -> None:
         _proof_step("step-b", []),
         _proof_step("step-c", ["unknown", "step-b", "step-a", "step-b"]),
     )
-    assert runner_helpers._build_step_premise_indices(proof_data) == [[], [], [0, 1]]
+    assert proof_adapter._build_step_premise_indices(proof_data) == [[], [], [0, 1]]

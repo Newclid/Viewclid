@@ -1,27 +1,26 @@
 import traceback
 from typing import Any
 
-from newclid.api import GeometricSolverBuilder
+from newclid.api import GeometricSolver, GeometricSolverBuilder
 from newclid.jgex.problem_builder import JGEXProblemBuilder
 from newclid.problem import predicate_to_construction
-from newclid.proof_data import proof_data_from_state
-from newclid.proof_writing import write_proof, write_proof_sections
+from newclid.proof_data import ProofData, proof_data_from_state
+from newclid.proof_writing import write_proof
 from newclid.rule import Rule
 
+from newclid_backend.proof_adapter import build_proof_sections
 from newclid_backend.runner_helpers import (
     _build_custom_rule_fields,
-    _build_step_premise_indices,
     _to_run_info_dict,
     _truncate_output,
 )
 from newclid_backend.runner_models import (
-    NewclidProofSections,
     NewclidRunResult,
     SketchPoint,
 )
 
 
-def _build_proof_data(solver: Any) -> Any:
+def _build_proof_data(solver: GeometricSolver) -> ProofData:
     goals_constructions = [
         predicate_to_construction(goal) for goal in solver.proof_state.goals
     ]
@@ -30,15 +29,8 @@ def _build_proof_data(solver: Any) -> Any:
     )
 
 
-def _build_proof_text(proof_data: Any) -> str:
+def _build_proof_text(proof_data: ProofData) -> str:
     return _truncate_output(write_proof(proof_data))
-
-
-def _build_proof_sections(proof_data: Any) -> NewclidProofSections:
-    proof_sections = write_proof_sections(proof_data)
-    result = NewclidProofSections.model_validate(proof_sections.model_dump())
-    result.step_premise_indices = _build_step_premise_indices(proof_data)
-    return result
 
 
 def _build_custom_rules(custom_theorems: list[dict[str, Any]]) -> list[Rule]:
@@ -47,7 +39,7 @@ def _build_custom_rules(custom_theorems: list[dict[str, Any]]) -> list[Rule]:
 
 # This function will not be called directly from our FastAPI backend logic
 # This will be directly invoked by a worker
-def _build_sketch_points(proof_data: Any) -> list[SketchPoint]:
+def _build_sketch_points(proof_data: ProofData) -> list[SketchPoint]:
     return [
         SketchPoint(name=p.name, x=float(p.num.x), y=float(p.num.y))
         for p in proof_data.points
@@ -81,7 +73,7 @@ def run_newclid_from_jgex(
 
         proof_data = _build_proof_data(solver)
         proof_text = _build_proof_text(proof_data)
-        proof_sections = _build_proof_sections(proof_data)
+        proof_sections = build_proof_sections(proof_data)
         sketch_points = _build_sketch_points(proof_data)
 
         return NewclidRunResult(
