@@ -16,6 +16,12 @@ def test_run_newclid_from_valid_jgex_returns_successful_result(
 
     assert result.proof_sections is not None
     assert result.proof_sections.proof_steps
+    sections = result.proof_sections
+    assert sections.construction_signatures
+    assert len(sections.construction_signatures) == len(sections.assumptions)
+    assert len(sections.step_signatures) == len(sections.proof_steps)
+    assert len(sections.goal_signatures) == len(sections.proven_goals)
+    assert sections.goal_signatures == ["perp a d b c"]
 
     assert result.run_info is not None
     assert result.run_info["success"] is True

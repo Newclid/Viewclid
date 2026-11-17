@@ -22,8 +22,11 @@ reference example to copy — it turns internal predicate ids into indices the
 frontend can use with zero knowledge of Newclid's own data structures:
 
 ```python
-# runner_helpers.py
-def _build_step_premise_indices(proof_data: Any) -> list[list[int]]:
+# proof_adapter.py
+from newclid.proof_data import ProofData
+
+
+def _build_step_premise_indices(proof_data: ProofData) -> list[list[int]]:
     id_to_step_idx = {
         step.proven_predicate.id: i for i, step in enumerate(proof_data.proof_steps)
     }
@@ -41,15 +44,14 @@ def _build_step_premise_indices(proof_data: Any) -> list[list[int]]:
 
 ```mermaid
 flowchart TD
-    A["proof_data: predicate ids"] --> B["runner_helpers.py:<br/>map to step indices"]
+    A["proof_data: predicate ids"] --> B["proof_adapter.py:<br/>map to step indices"]
     B --> C["step_premise_indices:<br/>list[list[int]]"]
     C --> D["frontend renders dependencies<br/>with zero Newclid knowledge"]
 ```
 
-This is called from `newclid_runner._build_proof_sections`, right after
-`write_proof_sections` builds the rest of `NewclidProofSections` — that's
-the pattern for any field derived from `proof_data` rather than copied
-as-is.
+This is called from `proof_adapter.build_proof_sections`, which combines
+Newclid's formatted sections with Viewclid's signatures and premise indices.
+The runner calls the adapter after obtaining `ProofData`.
 
 ## Steps
 
@@ -60,10 +62,9 @@ as-is.
    pre-formatted strings if the frontend will inspect it programmatically —
    `step_premise_indices` exists specifically because raw predicate ids
    weren't usable by the frontend on their own.
-3. **Populate it in `newclid_runner.py`**, near `_build_proof_data` /
-   `_build_proof_sections` / `_build_sketch_points`. Move the conversion into
-   `runner_helpers.py` if it's reusable or non-trivial, following
-   `_build_step_premise_indices`.
+3. **Populate proof-section fields in `proof_adapter.py`**, alongside
+   signatures and premise indices. Keep solving in `newclid_runner.py`;
+   it calls the adapter rather than defining the frontend's proof format.
 4. **Handle the failure path.** `proof_sections` (and `proof_text`,
    `sketch_points`) are only populated when `status == "succeeded"` — on
    `"failed"` they're `None`/`[]`. If your new field lives on
@@ -76,7 +77,7 @@ as-is.
 6. **Update the frontend proof UI docs** — whoever owns
    [proof UI](../../frontend/modules/proof-ui.md) should document how the
    new field gets displayed.
-7. **Add tests** — a runner-helper test for the conversion function in
+7. **Add tests** — a proof-adapter test for the conversion function in
    isolation, and an end-to-end test asserting the field survives
    `NewclidRunResult.model_dump()` and the HTTP response.
 

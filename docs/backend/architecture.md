@@ -38,7 +38,7 @@ Roles above map to files as in the [layers table](#layers) below: API =
 |---|---|---|
 | HTTP | `main.py`, `routers/jobs.py`, `schemas.py` | FastAPI app, request validation, public responses, status mapping. |
 | Queue | `queue.py`, `tasks.py` | Redis/RQ connection, enqueue options, worker task adapter. |
-| Runner | `newclid_runner.py`, `runner_helpers.py`, `runner_models.py` | Build a Newclid problem, run the solver, convert proof data, return a stable result model. |
+| Runner | `newclid_runner.py`, `proof_adapter.py`, `runner_helpers.py`, `runner_models.py` | Build a Newclid problem, run the solver, convert proof data, return a stable result model. |
 | Configuration | `settings.py` | Environment variables for Redis, queue names, timeouts, TTLs, output limits. |
 
 See the [module pages](modules/index.md) for a page per layer.

@@ -47,19 +47,3 @@ def _build_custom_rule_fields(
             }
         )
     return rule_kwargs
-
-
-def _build_step_premise_indices(proof_data: Any) -> list[list[int]]:
-    id_to_step_idx: dict[str, int] = {
-        step.proven_predicate.id: i for i, step in enumerate(proof_data.proof_steps)
-    }
-    return [
-        sorted(
-            {
-                id_to_step_idx[pid]
-                for pid in step.applied_on_predicates
-                if pid in id_to_step_idx
-            }
-        )
-        for step in proof_data.proof_steps
-    ]

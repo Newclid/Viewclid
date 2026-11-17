@@ -30,6 +30,7 @@ src/newclid_backend/
   queue.py
   tasks.py
   newclid_runner.py
+  proof_adapter.py
   runner_helpers.py
   runner_models.py
   settings.py
