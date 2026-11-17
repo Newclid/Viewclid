@@ -150,3 +150,33 @@ def test_handles_empty_proof() -> None:
     assert sections.step_signatures == []
     assert sections.goal_signatures == []
     assert sections.step_premise_indices == []
+
+
+def test_preserves_duplicate_signatures(proof_data: ProofData) -> None:
+    proof_data.construction_assumptions.append(
+        proof_data.construction_assumptions[0].model_copy(update={"id": ProofId("C1")})
+    )
+    proof_data.proven_goals.append(proof_data.proven_goals[0])
+    first_step = proof_data.proof_steps[0]
+    proof_data.proof_steps.append(
+        first_step.model_copy(
+            update={
+                "proven_predicate": first_step.proven_predicate.model_copy(
+                    update={"id": ProofId("2")}
+                )
+            }
+        )
+    )
+    sections = proof_adapter.build_proof_sections(proof_data)
+
+    assert sections.construction_signatures == ["coll a b c d", "coll a b c d"]
+    assert sections.step_signatures == ["coll a b c", "coll a b d", "coll a b c"]
+    assert sections.goal_signatures == ["coll a b d", "coll a b c", "coll a b d"]
+
+
+def test_only_proven_goals_have_signatures(proof_data: ProofData) -> None:
+    proof_data.unproven_goals.append(proof_data.proven_goals.pop().predicate)
+    sections = proof_adapter.build_proof_sections(proof_data)
+
+    assert sections.goal_signatures == ["coll a b d"]
+    assert len(sections.unproven_goals) == 1
