@@ -18,9 +18,10 @@ the same shape, as Python types rather than JSON.
 
 Twelve fields total — see the
 [contract's full field table](../../contracts/proof-result-model.md#proof-sections)
-for all of them. Eleven mirror Newclid's own structured proof output
-directly; one, `step_premise_indices: list[list[int]]`, is added by the
-backend. Each entry corresponds to one proof step and lists the earlier step
+for all of them. Eight contain Newclid's formatted proof sections.
+`proof_adapter.py` derives the three signature lists and
+`step_premise_indices: list[list[int]]` from Newclid's `ProofData`.
+Each premise-index entry corresponds to one proof step and lists the earlier step
 indices used as its premises, built from Newclid's predicate ids so a UI
 *could* render proof dependencies without knowing anything about Newclid
 internals — see the contract page for the caveat that this field isn't

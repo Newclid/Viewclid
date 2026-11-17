@@ -117,6 +117,7 @@ backend/
 │   ├── queue.py            Redis/RQ connection and job helpers
 │   ├── tasks.py            RQ task adapter
 │   ├── newclid_runner.py   Newclid/JGEX runner integration
+│   ├── proof_adapter.py    proof data conversion for the frontend
 │   ├── runner_helpers.py   runner helper functions
 │   ├── runner_models.py    internal runner result models
 │   ├── schemas.py          API request/response models

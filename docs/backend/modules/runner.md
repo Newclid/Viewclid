@@ -1,8 +1,9 @@
 # Runner
 
-The runner is the only backend layer that calls Newclid directly.
+The runner builds and runs the Newclid solver. The proof adapter converts
+its proof data into Viewclid's response format.
 
-Source: `newclid_runner.py`, `runner_helpers.py`, `runner_models.py`
+Source: `newclid_runner.py`, `proof_adapter.py`, `runner_helpers.py`, `runner_models.py`
 
 ## Entry point
 
@@ -41,7 +42,8 @@ On success, the runner builds proof data from the solver state, then produces
 two frontend-facing forms:
 
 - `proof_text` — full human-readable proof text, from `write_proof`.
-- `proof_sections` — structured sections, from `write_proof_sections`.
+- `proof_sections` — formatted sections and drawing signatures, from
+  `proof_adapter.build_proof_sections`.
 
 It also builds `sketch_points` from the proof data so the frontend can draw
 the final solved sketch. All three are defined in the

@@ -20,7 +20,8 @@ Unit tests run without a real Redis server or worker.
 | Job routes | Route behavior, public statuses, messages, unknown-job handling — with a mocked queue. |
 | Schemas | Request validation, custom theorem validation, duplicate names, predicate-line cleanup. |
 | Queue wrapper | Enqueue/fetch behavior with mocked queue state. |
-| Runner helpers | Output truncation, custom rule conversion, proof dependency indexing. |
+| Runner helpers | Output truncation, custom rule conversion. |
+| Proof adapter | Proof signatures, ordering, proof dependency indexing. |
 | Runner models | Pydantic model validation, especially sketch points. |
 | Tasks | The RQ task adapter returns a serializable dictionary. |
 

@@ -59,8 +59,8 @@ consumes it in the
 
 ## Proof sections
 
-`proof_sections` mirrors Newclid's own structured proof output field for
-field, plus one field the backend adds specifically for the frontend:
+`proof_sections` combines Newclid's formatted proof sections with signatures
+and premise indices derived from `ProofData` by Viewclid's proof adapter.
 
 | Field | Type | Meaning |
 |---|---|---|
@@ -72,9 +72,9 @@ field, plus one field the backend adds specifically for the frontend:
 | `unproven_goals` | `string[]` | Goals the solver could not prove. |
 | `proof_steps` | `string[]` | The proof itself, one line per step, in Newclid's own step-text format. |
 | `appendix_ar` | `string[]` | Algebraic-reasoning deductions, shown as a proof appendix. |
-| `construction_signatures` | `string[]` | Canonical signatures of the problem's constructions. |
-| `step_signatures` | `string[]` | Canonical signatures of each proof step's conclusion. |
-| `goal_signatures` | `string[]` | Canonical signatures of each goal. |
+| `construction_signatures` | `string[]` | Predicate signatures of construction assumptions included in the proof, in the same order as `assumptions`. |
+| `step_signatures` | `string[]` | Predicate signatures of each proof step's conclusion, in the same order as `proof_steps`. |
+| `goal_signatures` | `string[]` | Predicate signatures of proven goals, in the same order as `proven_goals`. |
 | `step_premise_indices` | `list[list[int]]` | Backend-added. For each proof step, the indices of earlier steps used as premises. |
 
 !!! info "Why `step_premise_indices` exists"
